@@ -1,0 +1,62 @@
+buildscript {
+    repositories {
+        jcenter()
+        maven {
+            name = "forge"
+            url = "http://files.minecraftforge.net/maven"
+        }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
+    }
+}
+apply plugin: 'net.minecraftforge.gradle.forge'
+
+version = "1.0"
+group= "de.canitzp.ctpcore"
+archivesBaseName = "ctpcore"
+
+sourceCompatibility = targetCompatibility = "1.8"
+compileJava {
+    sourceCompatibility = targetCompatibility = "1.8"
+}
+
+minecraft {
+    version = "1.10.2-12.18.2.2097"
+    runDir = "run"
+    mappings = "snapshot_20161008"
+}
+
+repositories{
+    maven {
+        url "http://dvs1.progwml6.com/files/maven"
+    }
+    maven {
+        url 'http://maven.epoxide.xyz'
+    }
+    maven {
+        name = "ic2"
+        url = "http://maven.ic2.player.to/"
+    }
+}
+
+dependencies {
+    deobfCompile "mezz.jei:jei_1.10.2:3.9.3.252"
+    deobfCompile "net.darkhax.tesla:Tesla:1.10.2-1.2.1.49"
+    deobfCompile "net.industrial-craft:industrialcraft-2:2.6.9-ex110:api"
+}
+
+processResources
+{
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
+
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+        expand 'version':project.version, 'mcversion':project.minecraft.version
+    }
+        
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
+}
