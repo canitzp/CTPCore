@@ -14,8 +14,6 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.wrapper.SidedInvWrapper;
 
-import javax.annotation.Nullable;
-
 /**
  * @author canitzp
  */
@@ -26,13 +24,13 @@ public class TileEntityInventory extends TileEntityBase implements ISidedInvento
     public SidedInvWrapper[] invWrappers = new SidedInvWrapper[6];
 
     public TileEntityInventory(ResourceLocation resource, int slotAmount){
-        super(resource);
         slots = new ItemStack[slotAmount];
         this.invName = "Inventory" + resource.getResourcePath();
         for(EnumFacing side : EnumFacing.values()){
             this.invWrappers[side.getIndex()] = new SidedInvWrapper(this, side);
         }
     }
+
     @Override
     public int[] getSlotsForFace(EnumFacing side) {
         if(this.slots.length > 0){
@@ -65,7 +63,7 @@ public class TileEntityInventory extends TileEntityBase implements ISidedInvento
     @Override
     public boolean isEmpty(){
         for(ItemStack stack : slots){
-            if(stack != ItemStack.EMPTY){
+            if(!stack.isEmpty()){
                 return false;
             }
         }
@@ -79,7 +77,7 @@ public class TileEntityInventory extends TileEntityBase implements ISidedInvento
 
     @Override
     public ItemStack decrStackSize(int index, int count) {
-        if(slots[index] != ItemStack.EMPTY){
+        if(!slots[index].isEmpty()){
             ItemStack stackAt;
             if(slots[index].getCount() <= count){
                 stackAt = slots[index];
@@ -100,7 +98,7 @@ public class TileEntityInventory extends TileEntityBase implements ISidedInvento
     }
 
     public void incrStackSize(int index, int count) {
-        if(slots[index] != ItemStack.EMPTY) {
+        if(!slots[index].isEmpty()) {
             this.setInventorySlotContents(index, new ItemStack(slots[index].getItem(), slots[index].getCount() + count, slots[index].getItemDamage()));
         }
     }
@@ -185,7 +183,7 @@ public class TileEntityInventory extends TileEntityBase implements ISidedInvento
                 for(int currentIndex = 0; currentIndex < slots.length; currentIndex++){
                     NBTTagCompound tagCompound = new NBTTagCompound();
                     tagCompound.setByte("Slot", (byte)currentIndex);
-                    if(slots[currentIndex] != ItemStack.EMPTY){
+                    if(!slots[currentIndex].isEmpty()){
                         slots[currentIndex].writeToNBT(tagCompound);
                     }
                     tagList.appendTag(tagCompound);
@@ -216,7 +214,7 @@ public class TileEntityInventory extends TileEntityBase implements ISidedInvento
     public int getNextFreeSlot(int slotIDMin, int slotIDMax){
         for(int i = slotIDMin; i <= slotIDMax; i++){
             ItemStack stack = getStackInSlot(i);
-            if(stack == ItemStack.EMPTY){
+            if(stack.isEmpty()){
                 return i;
             }
         }

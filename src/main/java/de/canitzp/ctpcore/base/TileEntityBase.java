@@ -1,6 +1,5 @@
 package de.canitzp.ctpcore.base;
 
-import de.canitzp.ctpcore.registry.IRegistryEntry;
 import de.canitzp.ctpcore.util.NBTSaveType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -14,26 +13,18 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author canitzp
  */
-public class TileEntityBase extends TileEntity implements IRegistryEntry{
+public class TileEntityBase extends TileEntity{
 
-    private static List<Class<? extends TileEntity>> registered = new ArrayList<>();
+    public TileEntityBase(){}
 
-    private ResourceLocation resource;
-
-    public TileEntityBase(ResourceLocation resource){
-        this.resource = resource;
-    }
+    @Deprecated // No constructor needed anymore
+    public TileEntityBase(ResourceLocation resource){}
 
     public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState){
         return oldState.getBlock() != newState.getBlock();
@@ -94,34 +85,7 @@ public class TileEntityBase extends TileEntity implements IRegistryEntry{
         }
     }
 
-    @Override
-    public IRegistryEntry[] getRegisterElements() {
-        return new IRegistryEntry[]{this};
+    public boolean canSync(){
+        return true;
     }
-
-    @Override
-    public ResourceLocation getRegisterName() {
-        return this.resource;
-    }
-
-    @Override
-    public void onRegister(IRegistryEntry[] otherEntries) {
-
-    }
-
-    @Override
-    public void ownRegistry() {
-        if(!registered.contains(this.getClass())){
-            GameRegistry.registerTileEntity(this.getClass(), this.resource.getResourceDomain() + this.resource.getResourcePath());
-            registered.add(this.getClass());
-        }
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public void registerRenderer() {
-
-    }
-
-    public boolean canSync(){return true;}
 }

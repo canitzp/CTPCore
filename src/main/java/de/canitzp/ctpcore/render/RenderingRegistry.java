@@ -3,16 +3,12 @@ package de.canitzp.ctpcore.render;
 import de.canitzp.ctpcore.base.FluidBase;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.fml.common.registry.IForgeRegistryEntry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author canitzp
@@ -22,7 +18,7 @@ public class RenderingRegistry {
 
     public static void addRenderer(Block block, int meta, ModelResourceLocation location){
         Item itemBlock = Item.getItemFromBlock(block);
-        if(itemBlock != null){
+        if(itemBlock != Items.AIR){
             addRenderer(itemBlock, meta, location);
         }
     }

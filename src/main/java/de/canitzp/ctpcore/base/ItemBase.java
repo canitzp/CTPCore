@@ -13,7 +13,7 @@ public class ItemBase extends Item implements IRegistryEntry{
 
     public ItemBase(ResourceLocation name){
         this.name = name;
-        this.setUnlocalizedName(name.getResourceDomain() + ":" + name.getResourcePath());
+        this.setUnlocalizedName(name.toString());
     }
 
     @Override

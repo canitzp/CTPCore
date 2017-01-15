@@ -1,7 +1,6 @@
 package de.canitzp.ctpcore.base;
 
 import de.canitzp.ctpcore.registry.IRegistryEntry;
-import de.canitzp.ctpcore.render.RenderingRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
@@ -15,7 +14,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class BlockBase extends Block implements IRegistryEntry {
 
     private ResourceLocation resource;
-
 
     public BlockBase(Material material, ResourceLocation resource) {
         super(material);

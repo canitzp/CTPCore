@@ -4,18 +4,15 @@ import de.canitzp.ctpcore.CTPCore;
 import de.canitzp.ctpcore.inventory.CTPGuiHandler;
 import de.canitzp.ctpcore.property.ExtendedDirection;
 import de.canitzp.ctpcore.registry.IRegistryEntry;
-import net.minecraft.block.BlockDirectional;
-import net.minecraft.block.BlockHorizontal;
+import de.canitzp.ctpcore.registry.TileEntityProvider;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -104,7 +101,7 @@ public class BlockContainerBase extends BlockBase implements ITileEntityProvider
 
     @Override
     public IRegistryEntry[] getRegisterElements(){
-        return ArrayUtils.addAll(super.getRegisterElements(), createNewTileEntity(null, 0));
+        return ArrayUtils.addAll(super.getRegisterElements(), new TileEntityProvider(this.tileClass, super.getRegisterName()));
     }
 
     public ExtendedDirection getFacing(){
