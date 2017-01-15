@@ -1,5 +1,6 @@
 package de.canitzp.ctpcore.inventory;
 
+import de.canitzp.ctpcore.base.TileEntityBase;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.inventory.Container;
@@ -8,10 +9,13 @@ import net.minecraft.util.ResourceLocation;
 /**
  * @author canitzp
  */
-public abstract class GuiContainerBase extends GuiContainer{
+public abstract class GuiContainerBase<T extends TileEntityBase> extends GuiContainer{
 
-    public GuiContainerBase(Container inventorySlotsIn){
-        super(inventorySlotsIn);
+    public T tile;
+
+    public GuiContainerBase(ContainerBase<T> container){
+        super(container);
+        this.tile = container.tile;
     }
 
     protected void bindTexture(ResourceLocation res){

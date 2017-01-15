@@ -106,8 +106,6 @@ public class TileEntityEnergy extends TileEntityInventory implements IEnergyStor
         return this.storage.getCapacity();
     }
 
-
-
     @Override
     public void writeToNBT(NBTTagCompound compound, NBTSaveType type) {
         this.storage.writeToNBT(compound);

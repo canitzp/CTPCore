@@ -2,7 +2,9 @@ package de.canitzp.ctpcore.base;
 
 import de.canitzp.ctpcore.CTPCore;
 import de.canitzp.ctpcore.inventory.CTPGuiHandler;
+import de.canitzp.ctpcore.property.ExtendedDirection;
 import de.canitzp.ctpcore.registry.IRegistryEntry;
+import net.minecraft.block.BlockDirectional;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -27,26 +29,25 @@ import org.apache.commons.lang3.ArrayUtils;
  */
 public class BlockContainerBase extends BlockBase implements ITileEntityProvider {
 
-    private final Object mod;
+    private Object mod;
     protected Class<? extends TileEntityBase> tileClass;
     protected int guiId = -1;
-    public static final PropertyDirection FACING = BlockHorizontal.FACING;
 
-    public BlockContainerBase(Object mod, Material material, ResourceLocation resource, Class<? extends TileEntityBase> tileClass) {
+    public BlockContainerBase(Material material, ResourceLocation resource, Class<? extends TileEntityBase> tileClass) {
         super(material, resource);
-        this.mod = mod;
         this.isBlockContainer = true;
         this.tileClass = tileClass;
-        this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
+        this.setDefaultState(this.blockState.getBaseState().withProperty(getFacing(), ExtendedDirection.ExtendedFacing.NORTH));
     }
 
-    public BlockContainerBase addGuiContainer(Class<? extends GuiContainer> gui, Class<? extends Container> con){
+    public BlockContainerBase addGuiContainer(Object mod, Class<? extends GuiContainer> gui, Class<? extends Container> con){
         this.guiId = CTPGuiHandler.addGuiContainer(gui, con);
+        this.mod = mod;
         return this;
     }
 
     @Override
-    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
         if(guiId >= 0){
             if(!worldIn.isRemote){
                 if(CTPGuiHandler.REGISTERED_MODS.contains(this.mod)){
@@ -57,7 +58,7 @@ public class BlockContainerBase extends BlockBase implements ITileEntityProvider
             }
             return true;
         } else {
-            return super.onBlockActivated(worldIn, pos, state, playerIn, hand, heldItem, side, hitX, hitY, hitZ);
+            return super.onBlockActivated(worldIn, pos, state, playerIn, hand, side, hitX, hitY, hitZ);
         }
     }
 
@@ -83,26 +84,30 @@ public class BlockContainerBase extends BlockBase implements ITileEntityProvider
 
     @Override
     public int getMetaFromState(IBlockState state) {
-        return state.getValue(FACING).getHorizontalIndex();
+        return state.getValue(getFacing()).ordinal();
     }
 
     @Override
     public IBlockState getStateFromMeta(int meta) {
-        return getDefaultState().withProperty(FACING, EnumFacing.getHorizontal(meta));
+        return getDefaultState().withProperty(getFacing(), ExtendedDirection.ExtendedFacing.values()[meta]);
     }
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, FACING);
+        return new BlockStateContainer(this, getFacing());
     }
 
     @Override
-    public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
-        return this.getDefaultState().withProperty(FACING, placer.getHorizontalFacing().getOpposite());
+    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
+        return this.getDefaultState().withProperty(getFacing(), ExtendedDirection.ExtendedFacing.getDirectionFromLiving(pos, placer));
     }
 
     @Override
     public IRegistryEntry[] getRegisterElements(){
         return ArrayUtils.addAll(super.getRegisterElements(), createNewTileEntity(null, 0));
+    }
+
+    public ExtendedDirection getFacing(){
+        return ExtendedDirection.create("direction");
     }
 }

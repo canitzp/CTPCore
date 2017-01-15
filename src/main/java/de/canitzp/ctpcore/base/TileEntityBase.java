@@ -9,9 +9,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -74,13 +76,21 @@ public class TileEntityBase extends TileEntity implements IRegistryEntry{
     }
 
     public void syncToClient(){
-        for(EntityPlayer player : this.getWorld().playerEntities){
-            if(player instanceof EntityPlayerMP){
-                BlockPos pos = this.getPos();
-                if(player.getDistance(pos.getX(), pos.getY(), pos.getZ()) <= 64){
-                    ((EntityPlayerMP)player).connection.sendPacket(this.getUpdatePacket());
+        if(canSync()){
+            for(EntityPlayer player : this.getWorld().playerEntities){
+                if(player instanceof EntityPlayerMP){
+                    BlockPos pos = this.getPos();
+                    if(player.getDistance(pos.getX(), pos.getY(), pos.getZ()) <= 64){
+                        ((EntityPlayerMP)player).connection.sendPacket(this.getUpdatePacket());
+                    }
                 }
             }
+        }
+    }
+
+    public void spawnParticle(EnumParticleTypes type, double x, double y, double z, int amount, double speed, int[] args){
+        if(!this.world.isRemote){
+            ((WorldServer)this.world).spawnParticle(type, x, y, z, amount,0, 0, 0, speed, args);
         }
     }
 
@@ -112,4 +122,6 @@ public class TileEntityBase extends TileEntity implements IRegistryEntry{
     public void registerRenderer() {
 
     }
+
+    public boolean canSync(){return true;}
 }

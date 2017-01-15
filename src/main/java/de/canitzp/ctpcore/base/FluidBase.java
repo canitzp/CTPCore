@@ -7,6 +7,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
@@ -58,7 +59,7 @@ public class FluidBase extends Fluid implements IRegistryEntry {
     @Override
     public void registerRenderer() {
         Item item = Item.getItemFromBlock(this.block);
-        if(item != null){
+        if(item != Items.AIR){
             final ModelResourceLocation loc = new ModelResourceLocation(new ResourceLocation(this.getRegisterName().getResourceDomain(), "fluids"), this.getName());
             ItemMeshDefinition mesh = stack -> loc;
             StateMapperBase mapper = new StateMapperBase(){

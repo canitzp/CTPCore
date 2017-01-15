@@ -63,24 +63,34 @@ public class TileEntityInventory extends TileEntityBase implements ISidedInvento
     }
 
     @Override
+    public boolean isEmpty(){
+        for(ItemStack stack : slots){
+            if(stack != ItemStack.EMPTY){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
     public ItemStack getStackInSlot(int index) {
         return this.slots[index];
     }
 
     @Override
     public ItemStack decrStackSize(int index, int count) {
-        if(slots[index] != null){
+        if(slots[index] != ItemStack.EMPTY){
             ItemStack stackAt;
-            if(slots[index].stackSize <= count){
+            if(slots[index].getCount() <= count){
                 stackAt = slots[index];
-                slots[index] = null;
+                slots[index] = ItemStack.EMPTY;
                 this.markDirty();
                 return stackAt;
             }
             else{
                 stackAt = slots[index].splitStack(count);
-                if(slots[index].stackSize == 0){
-                    slots[index] = null;
+                if(slots[index].getCount() == 0){
+                    slots[index] = ItemStack.EMPTY;
                 }
                 this.markDirty();
                 return stackAt;
@@ -90,14 +100,14 @@ public class TileEntityInventory extends TileEntityBase implements ISidedInvento
     }
 
     public void incrStackSize(int index, int count) {
-        if(slots[index] != null) {
-            this.setInventorySlotContents(index, new ItemStack(slots[index].getItem(), slots[index].stackSize + count, slots[index].getItemDamage()));
+        if(slots[index] != ItemStack.EMPTY) {
+            this.setInventorySlotContents(index, new ItemStack(slots[index].getItem(), slots[index].getCount() + count, slots[index].getItemDamage()));
         }
     }
 
     @Override
     public ItemStack removeStackFromSlot(int index) {
-        return this.slots[index] = null;
+        return this.slots[index] = ItemStack.EMPTY;
     }
 
 
@@ -112,10 +122,9 @@ public class TileEntityInventory extends TileEntityBase implements ISidedInvento
         return 64;
     }
 
-
     @Override
-    public boolean isUseableByPlayer(EntityPlayer player) {
-        return player.getDistanceSq(this.getPos().getX() + 0.5D, this.pos.getY() + 0.5D, this.pos.getZ() + 0.5D) <= 64 && !this.isInvalid() && this.worldObj.getTileEntity(this.pos) == this;
+    public boolean isUsableByPlayer(EntityPlayer player) {
+        return player.getDistanceSq(this.getPos().getX() + 0.5D, this.pos.getY() + 0.5D, this.pos.getZ() + 0.5D) <= 64 && !this.isInvalid() && this.world.getTileEntity(this.pos) == this;
     }
 
     @Override
@@ -176,7 +185,7 @@ public class TileEntityInventory extends TileEntityBase implements ISidedInvento
                 for(int currentIndex = 0; currentIndex < slots.length; currentIndex++){
                     NBTTagCompound tagCompound = new NBTTagCompound();
                     tagCompound.setByte("Slot", (byte)currentIndex);
-                    if(slots[currentIndex] != null){
+                    if(slots[currentIndex] != ItemStack.EMPTY){
                         slots[currentIndex].writeToNBT(tagCompound);
                     }
                     tagList.appendTag(tagCompound);
@@ -197,7 +206,7 @@ public class TileEntityInventory extends TileEntityBase implements ISidedInvento
                     NBTTagCompound tagCompound = tagList.getCompoundTagAt(i);
                     byte slotIndex = tagCompound.getByte("Slot");
                     if(slotIndex >= 0 && slotIndex < slots.length){
-                        slots[slotIndex] = ItemStack.loadItemStackFromNBT(tagCompound);
+                        slots[slotIndex] = new ItemStack(tagCompound);
                     }
                 }
             }
@@ -207,7 +216,7 @@ public class TileEntityInventory extends TileEntityBase implements ISidedInvento
     public int getNextFreeSlot(int slotIDMin, int slotIDMax){
         for(int i = slotIDMin; i <= slotIDMax; i++){
             ItemStack stack = getStackInSlot(i);
-            if(stack == null){
+            if(stack == ItemStack.EMPTY){
                 return i;
             }
         }
@@ -216,7 +225,7 @@ public class TileEntityInventory extends TileEntityBase implements ISidedInvento
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing){
-        if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
+        if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing != null){
             return (T) this.invWrappers[facing.getIndex()];
         }
         return super.getCapability(capability, facing);
