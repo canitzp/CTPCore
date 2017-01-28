@@ -25,7 +25,7 @@ public class CTPGuiHandler implements IGuiHandler {
     private static Map<Integer, Class<? extends GuiScreen>> guis = new HashMap<>();
     private static Map<Integer, Class<? extends Container>> container = new HashMap<>();
 
-
+    @Deprecated //Use CTPCore.init instead!
     public static void registerMod(Object modInstance){
         if(modInstance != null){
             NetworkRegistry.INSTANCE.registerGuiHandler(modInstance, INSTANCE);

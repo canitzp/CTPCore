@@ -85,7 +85,12 @@ public class TileEntityBase extends TileEntity{
         }
     }
 
+    @Deprecated
     public boolean canSync(){
+        return true;
+    }
+
+    public boolean canSync(EntityPlayerMP player){
         return true;
     }
 }
