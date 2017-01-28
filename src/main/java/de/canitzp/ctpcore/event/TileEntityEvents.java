@@ -18,7 +18,8 @@ public class TileEntityEvents{
         if(!event.world.isRemote){
             for(TileEntity tile : event.world.tickableTileEntities){
                 if(tile instanceof ISyncable){
-                    if(((ISyncable) tile).getSyncTimeInTicks() == 0 || event.world.getTotalWorldTime() % ((ISyncable) tile).getSyncTimeInTicks() == 0){
+                    int delay = ((ISyncable) tile).getSyncTimeInTicks();
+                    if(delay >= 0 && (delay == 0 || event.world.getTotalWorldTime() % ((ISyncable) tile).getSyncTimeInTicks() == 0)){
                         CTPCore.network.sendToAllAround(new SyncTile(((ISyncable) tile).getSyncableData(), tile.getPos()), new NetworkRegistry.TargetPoint(tile.getWorld().provider.getDimension(), tile.getPos().getX(), tile.getPos().getY(), tile.getPos().getZ(), 64));
                     }
                 }

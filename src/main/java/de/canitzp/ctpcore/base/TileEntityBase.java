@@ -1,6 +1,7 @@
 package de.canitzp.ctpcore.base;
 
 import de.canitzp.ctpcore.util.NBTSaveType;
+import de.canitzp.ctpcore.util.NBTUtil;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -8,11 +9,13 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nullable;
 
@@ -59,21 +62,27 @@ public class TileEntityBase extends TileEntity{
     }
 
     public void writeToNBT(NBTTagCompound compound, NBTSaveType type){
-
+        if(type == NBTSaveType.SAVE || type == NBTSaveType.DROP_BLOCK){
+            if(this.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.NORTH)){
+                compound.merge(NBTUtil.writeInventory(this.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.NORTH)));
+            }
+        }
     }
 
     public void readFromNBT(NBTTagCompound compound, NBTSaveType type){
-
+        if(type == NBTSaveType.SAVE || type == NBTSaveType.DROP_BLOCK){
+            if(this.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.NORTH)){
+                NBTUtil.readInventory(compound, this.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.NORTH));
+            }
+        }
     }
 
     public void syncToClient(){
-        if(canSync()){
-            for(EntityPlayer player : this.getWorld().playerEntities){
-                if(player instanceof EntityPlayerMP){
-                    BlockPos pos = this.getPos();
-                    if(player.getDistance(pos.getX(), pos.getY(), pos.getZ()) <= 64){
-                        ((EntityPlayerMP)player).connection.sendPacket(this.getUpdatePacket());
-                    }
+        for(EntityPlayer player : this.getWorld().playerEntities){
+            if(player instanceof EntityPlayerMP && canSync((EntityPlayerMP) player)){
+                BlockPos pos = this.getPos();
+                if(player.getDistance(pos.getX(), pos.getY(), pos.getZ()) <= 64){
+                    ((EntityPlayerMP) player).connection.sendPacket(this.getUpdatePacket());
                 }
             }
         }
