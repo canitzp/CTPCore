@@ -9,10 +9,15 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author canitzp
  */
 public class BlockBase extends Block implements IRegistryEntry {
+
+    public static Map<Block, String> oreDicts = new HashMap<>();
 
     private ResourceLocation resource;
 
@@ -62,6 +67,11 @@ public class BlockBase extends Block implements IRegistryEntry {
      */
     public BlockBase spawnInWorld(Block blockToSpawnInside, int chance, int maxY, int minY, int veinSize, int dimension){
         WorldGenerator.addBlockSpawn(this, blockToSpawnInside, chance, maxY, minY, veinSize, dimension);
+        return this;
+    }
+
+    public BlockBase addOreDictionary(String entryName){
+        oreDicts.put(this, entryName);
         return this;
     }
 

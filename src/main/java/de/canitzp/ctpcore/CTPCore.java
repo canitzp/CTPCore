@@ -1,9 +1,11 @@
 package de.canitzp.ctpcore;
 
+import de.canitzp.ctpcore.base.BlockBase;
 import de.canitzp.ctpcore.event.TileEntityEvents;
 import de.canitzp.ctpcore.inventory.CTPGuiHandler;
 import de.canitzp.ctpcore.registry.MCRegistry;
 import de.canitzp.ctpcore.sync.SyncTile;
+import net.minecraft.block.Block;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
@@ -12,11 +14,13 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.oredict.OreDictionary;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The CTPCore isn't a standalone Mod.
@@ -64,6 +68,9 @@ public class CTPCore {
 
         MinecraftForge.EVENT_BUS.register(TileEntityEvents.class);
         GameRegistry.registerWorldGenerator(new WorldGenerator(), 10);
+        for(Map.Entry<Block, String> entry : BlockBase.oreDicts.entrySet()){
+            OreDictionary.registerOre(entry.getValue(), entry.getKey());
+        }
     }
 
 }
