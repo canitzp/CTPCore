@@ -38,19 +38,24 @@ public class ExtendedDirection extends PropertyEnum<ExtendedDirection.ExtendedFa
         SOUTH(EnumFacing.SOUTH),
         WEST(EnumFacing.WEST),
         EAST(EnumFacing.EAST),
-        UP_NORTH(EnumFacing.UP),
-        UP_SOUTH(EnumFacing.UP),
-        UP_WEST(EnumFacing.UP),
-        UP_EAST(EnumFacing.UP),
-        DOWN_NORTH(EnumFacing.DOWN),
-        DOWN_SOUTH(EnumFacing.DOWN),
-        DOWN_WEST(EnumFacing.DOWN),
-        DOWN_EAST(EnumFacing.DOWN);
+        UP_NORTH(EnumFacing.UP, EnumFacing.NORTH),
+        UP_SOUTH(EnumFacing.UP, EnumFacing.SOUTH),
+        UP_WEST(EnumFacing.UP, EnumFacing.WEST),
+        UP_EAST(EnumFacing.UP, EnumFacing.EAST),
+        DOWN_NORTH(EnumFacing.DOWN, EnumFacing.NORTH),
+        DOWN_SOUTH(EnumFacing.DOWN, EnumFacing.SOUTH),
+        DOWN_WEST(EnumFacing.DOWN, EnumFacing.WEST),
+        DOWN_EAST(EnumFacing.DOWN, EnumFacing.EAST);
 
-        private EnumFacing vanillaFacing;
+        private EnumFacing vanillaFacing, secondAttribute;
+
+        ExtendedFacing(EnumFacing vanillaFacing, EnumFacing secondAttribute){
+            this.vanillaFacing = vanillaFacing;
+            this.secondAttribute = secondAttribute;
+        }
 
         ExtendedFacing(EnumFacing vanillaFacing){
-            this.vanillaFacing = vanillaFacing;
+            this(vanillaFacing, null);
         }
 
         @Override
@@ -87,6 +92,10 @@ public class ExtendedDirection extends PropertyEnum<ExtendedDirection.ExtendedFa
 
         public EnumFacing getVanillaFacing(){
             return this.vanillaFacing;
+        }
+
+        public EnumFacing getAlternativeFacing(){
+            return secondAttribute;
         }
     }
 
