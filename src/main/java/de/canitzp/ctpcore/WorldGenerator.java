@@ -1,15 +1,16 @@
 package de.canitzp.ctpcore;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.state.pattern.BlockMatcher;
+import de.canitzp.ctpcore.base.BlockBase;
+import de.canitzp.ctpcore.generation.CustomMineable;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldType;
 import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraft.world.gen.feature.WorldGenMinable;
 import net.minecraftforge.fml.common.IWorldGenerator;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -32,26 +33,32 @@ public class WorldGenerator implements IWorldGenerator{
         }
     }
 
-    public void addOreSpawn(Block block, Block blockIn, World world, Random random, int blockXPos, int blockZPos, int maxVeinSize, int chancesToSpawn, int minY, int maxY){
+    public void addOreSpawn(IBlockState block, @Nullable IBlockState blockToSpawnInside, World world, Random random, int blockXPos, int blockZPos, int maxVeinSize, int chancesToSpawn, int minY, int maxY){
         if(maxY > minY){
             int yDiff = maxY-minY;
             for(int i = 0; i < chancesToSpawn; i++){
                 int posX = blockXPos+random.nextInt(16);
                 int posY = minY+random.nextInt(yDiff);
                 int posZ = blockZPos+random.nextInt(16);
-                new WorldGenMinable(block.getDefaultState(), maxVeinSize, BlockMatcher.forBlock(blockIn)).generate(world, random, new BlockPos(posX, posY, posZ));
+                CustomMineable mineable = blockToSpawnInside != null ? new CustomMineable(block, maxVeinSize, input -> input == blockToSpawnInside) : new CustomMineable(block, maxVeinSize);
+                List<BlockPos> spawned = mineable.customGenerate(world, random, new BlockPos(posX, posY, posZ));
+                if(block.getBlock() instanceof BlockBase){
+                    for(BlockPos pos : spawned){
+                        ((BlockBase) block.getBlock()).spawnedAt(world, pos, spawned.size());
+                    }
+                }
             }
         }
     }
 
-    public static void addBlockSpawn(Block block, Block blockToSpawnInside, int chance, int maxY, int minY, int veinSize, int dimension){
+    public static void addBlockSpawn(IBlockState block, @Nullable IBlockState blockToSpawnInside, int chance, int maxY, int minY, int veinSize, int dimension){
         spawner.add(new Props(block, blockToSpawnInside, chance, maxY, minY, veinSize, dimension));
     }
 
     private static class Props{
         private int minY, maxY, veinSize, chance, dimension;
-        private Block block, blockToSpawnInside;
-        private Props(Block block, Block blockToSpawnInside, int chance, int maxY, int minY, int veinSize, int dimension) {
+        private IBlockState block, blockToSpawnInside;
+        private Props(IBlockState block, @Nullable IBlockState blockToSpawnInside, int chance, int maxY, int minY, int veinSize, int dimension) {
             this.chance = chance;
             this.maxY = maxY;
             this.minY = minY;
