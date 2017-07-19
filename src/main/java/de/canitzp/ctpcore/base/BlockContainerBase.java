@@ -181,6 +181,6 @@ public class BlockContainerBase extends BlockBase implements ITileEntityProvider
     @SideOnly(Side.CLIENT)
     public List<String> getDescriptionList(ItemStack stack, EntityPlayer player, boolean advanced){
         String s = getDescription(stack, player, advanced);
-        return s != null ? Minecraft.getMinecraft().fontRendererObj.listFormattedStringToWidth(s, 150) : Collections.emptyList();
+        return s != null ? Minecraft.getMinecraft().fontRenderer.listFormattedStringToWidth(s, 150) : Collections.emptyList();
     }
 }

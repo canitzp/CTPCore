@@ -105,7 +105,7 @@ public class TileEntityBase extends TileEntity{
     }
 
     public AxisAlignedBB getInside(float range){
-        return new AxisAlignedBB(this.pos.getX() + 0.5, this.pos.getY() + 0.5, this.pos.getZ() + 0.5, this.pos.getX() + 0.5, this.pos.getY() + 0.5, this.pos.getZ() + 0.5).expandXyz(range);
+        return new AxisAlignedBB(this.pos.getX() + 0.5, this.pos.getY() + 0.5, this.pos.getZ() + 0.5, this.pos.getX() + 0.5, this.pos.getY() + 0.5, this.pos.getZ() + 0.5).grow(range);
     }
 
 }
