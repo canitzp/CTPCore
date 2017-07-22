@@ -18,22 +18,10 @@ import java.util.Map;
  */
 public class CTPGuiHandler implements IGuiHandler {
 
-    public static final List<Object> REGISTERED_MODS = new ArrayList<>();
-
-    private static CTPGuiHandler INSTANCE = new CTPGuiHandler();
+    public static CTPGuiHandler INSTANCE = new CTPGuiHandler();
 
     private static Map<Integer, Class<? extends GuiScreen>> guis = new HashMap<>();
     private static Map<Integer, Class<? extends Container>> container = new HashMap<>();
-
-    @Deprecated //Use CTPCore.init instead!
-    public static void registerMod(Object modInstance){
-        if(modInstance != null){
-            NetworkRegistry.INSTANCE.registerGuiHandler(modInstance, INSTANCE);
-            REGISTERED_MODS.add(modInstance);
-        } else {
-            throw new NullPointerException("You can not register a GuiHandler to a mod that is null!");
-        }
-    }
 
     public static int addGui(Class<? extends GuiScreen> gui){
         int ID = guis.size();

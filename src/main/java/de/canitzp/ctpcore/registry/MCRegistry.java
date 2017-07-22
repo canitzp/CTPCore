@@ -1,8 +1,16 @@
 package de.canitzp.ctpcore.registry;
 
+import com.google.common.collect.Lists;
 import de.canitzp.ctpcore.CTPCore;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.IForgeRegistryEntry;
+import org.apache.commons.lang3.ArrayUtils;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This is the main register class to add all IRegistryEntries to the game.
@@ -44,6 +52,26 @@ public class MCRegistry {
             }
         }
         return entry;
+    }
+
+    public static boolean processRegistering(Class<?>... registerClasses){
+        for(Class<?> registerClass : registerClasses){
+            for(Field field : registerClass.getDeclaredFields()){
+                if(field.isAnnotationPresent(Register.class)){
+                    try {
+                        Object o = field.getType().newInstance();
+                        if(o instanceof IRegistryEntry){
+                            MCRegistry.register((IRegistryEntry) o);
+                            field.set(o, null);
+                        }
+                    } catch (InstantiationException | IllegalAccessException e) {
+                        e.printStackTrace();
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
 }

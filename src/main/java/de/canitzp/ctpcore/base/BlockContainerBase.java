@@ -1,5 +1,6 @@
 package de.canitzp.ctpcore.base;
 
+import com.google.common.collect.Lists;
 import de.canitzp.ctpcore.CTPCore;
 import de.canitzp.ctpcore.inventory.CTPGuiHandler;
 import de.canitzp.ctpcore.property.ExtendedDirection;
@@ -34,8 +35,9 @@ import java.util.List;
 /**
  * @author canitzp
  */
-public class BlockContainerBase extends BlockBase implements ITileEntityProvider {
+public class BlockContainerBase extends BlockBase<BlockContainerBase> implements ITileEntityProvider {
 
+    protected static final ExtendedDirection HORIZONTAL = ExtendedDirection.create("direction", Lists.newArrayList(ExtendedDirection.ExtendedFacing.NORTH, ExtendedDirection.ExtendedFacing.SOUTH, ExtendedDirection.ExtendedFacing.EAST, ExtendedDirection.ExtendedFacing.WEST));
     private Object mod;
     protected Class<? extends TileEntityBase> tileClass;
     protected int guiId = -1;
@@ -53,11 +55,17 @@ public class BlockContainerBase extends BlockBase implements ITileEntityProvider
         return this;
     }
 
+    public BlockContainerBase addGui(Object mod, Class<? extends GuiContainer> gui){
+        this.guiId = CTPGuiHandler.addGui(gui);
+        this.mod = mod;
+        return this;
+    }
+
     @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
         if(guiId >= 0){
             if(!worldIn.isRemote){
-                if(CTPGuiHandler.REGISTERED_MODS.contains(this.mod)){
+                if(CTPCore.isModRegistered(this.mod)){
                     playerIn.openGui(this.mod, guiId, worldIn, pos.getX(), pos.getY(), pos.getZ());
                 } else {
                     CTPCore.logger.error("The mod '" + this.mod + "' isn't registered in the CTPGuiHandler! Please call CTPGuiHandler.registerMod(ModInstance) first!");

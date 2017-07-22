@@ -1,6 +1,5 @@
 package de.canitzp.ctpcore.generation;
 
-import com.google.common.base.Predicate;
 import de.canitzp.ctpcore.base.BlockBase;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
@@ -11,6 +10,7 @@ import net.minecraft.world.gen.feature.WorldGenMinable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Predicate;
 
 /**
  * @author canitzp
@@ -26,11 +26,11 @@ public class CustomMineable extends WorldGenMinable{
         super(state, blockCount);
     }
 
-    public CustomMineable(IBlockState state, int blockCount, Predicate<IBlockState> p_i45631_3_){
-        super(state, blockCount, p_i45631_3_);
+    public CustomMineable(IBlockState state, int blockCount, Predicate<IBlockState> predicate){
+        super(state, blockCount, predicate::test);
         this.oreBlock = state;
         this.numberOfBlocks = blockCount;
-        this.predicate = p_i45631_3_;
+        this.predicate = predicate;
     }
 
     @Override
@@ -79,7 +79,7 @@ public class CustomMineable extends WorldGenMinable{
                                     BlockPos blockpos = new BlockPos(l1, i2, j2);
 
                                     IBlockState state = world.getBlockState(blockpos);
-                                    if(state.getBlock().isReplaceableOreGen(state, world, blockpos, this.predicate)){
+                                    if(state.getBlock().isReplaceableOreGen(state, world, blockpos, this.predicate::test)){
                                         if(this.oreBlock.getBlock() instanceof BlockBase){
                                             this.oreBlock = ((BlockBase) this.oreBlock.getBlock()).manipulateSpawnBlock(world, blockpos, this.oreBlock);
                                         }

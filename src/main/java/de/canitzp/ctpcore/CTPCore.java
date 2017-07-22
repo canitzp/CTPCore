@@ -10,6 +10,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -51,9 +52,9 @@ public class CTPCore {
     private static boolean alreadyInitialized;
 
     public static void init(Object mod, FMLInitializationEvent event){
-        if(!modsLoadedWithCTP.contains(mod) && mod.getClass().isAnnotationPresent(Mod.class)){
+        if(!isModRegistered(mod) && mod.getClass().isAnnotationPresent(Mod.class)){
             modsLoadedWithCTP.add(mod);
-            CTPGuiHandler.registerMod(mod);
+            NetworkRegistry.INSTANCE.registerGuiHandler(mod, CTPGuiHandler.INSTANCE);
             logger.info("Found CTP-Mod " + mod.getClass().getAnnotation(Mod.class).name());
         }
         if(!alreadyInitialized){
@@ -71,6 +72,10 @@ public class CTPCore {
         for(Map.Entry<Block, String> entry : BlockBase.oreDicts.entrySet()){
             OreDictionary.registerOre(entry.getValue(), entry.getKey());
         }
+    }
+
+    public static boolean isModRegistered(Object mod){
+        return modsLoadedWithCTP.contains(mod);
     }
 
 }
