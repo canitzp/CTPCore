@@ -54,24 +54,31 @@ public class MCRegistry {
         return entry;
     }
 
-    public static boolean processRegistering(Class<?>... registerClasses){
-        for(Class<?> registerClass : registerClasses){
-            for(Field field : registerClass.getDeclaredFields()){
-                if(field.isAnnotationPresent(Register.class)){
-                    try {
+    public static boolean processRegistering(Class<?>... registerClasses) {
+        try {
+            for (Class<?> registerClass : registerClasses) {
+                for (Field field : registerClass.getDeclaredFields()) {
+                    if (field.get(null) == null) {
                         Object o = field.getType().newInstance();
-                        if(o instanceof IRegistryEntry){
+                        if (o instanceof IRegistryEntry) {
+                            System.out.println(o);
                             MCRegistry.register((IRegistryEntry) o);
-                            field.set(o, null);
+                            field.set(null, o);
                         }
-                    } catch (InstantiationException | IllegalAccessException e) {
-                        e.printStackTrace();
-                        return false;
+                    } else {
+                        Object o = field.get(null);
+                        if (o instanceof IRegistryEntry) {
+                            System.out.println(o);
+                            MCRegistry.register((IRegistryEntry) o);
+                        }
                     }
                 }
             }
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
-        return true;
     }
 
 }
